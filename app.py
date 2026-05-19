@@ -555,21 +555,19 @@ ideia_principal = st.text_area(
     key="ideia_principal",
 )
 
-col_b1, col_b2 = st.columns(2)
-with col_b1:
-    pontos_chave = st.text_area(
-        "Pontos-chave para cobrir",
-        placeholder="Liste os tópicos/pontos principais que devem estar no roteiro:\n• Ponto 1\n• Ponto 2\n• Ponto 3",
-        height=110,
-        key="pontos_chave",
-    )
-with col_b2:
-    referencias = st.text_area(
-        "Referências de conteúdo (opcional)",
-        placeholder="Cole links ou descreva conteúdos que funcionaram bem no seu nicho e que servem de inspiração.",
-        height=110,
-        key="referencias",
-    )
+pontos_chave = st.text_area(
+    "Pontos-chave para cobrir",
+    placeholder="Liste os tópicos/pontos principais que devem estar no roteiro:\n• Ponto 1\n• Ponto 2\n• Ponto 3",
+    height=110,
+    key="pontos_chave",
+)
+
+referencias = st.text_area(
+    "Referências de conteúdo / Transcrição da concorrência (opcional)",
+    placeholder="Cole transcrições de vídeos da concorrência, links ou descreva conteúdos que funcionaram bem no seu nicho. A IA vai usar como referência de estrutura e tom — nunca copiará.",
+    height=200,
+    key="referencias",
+)
 
 nao_fazer = st.text_input(
     "O que NÃO fazer (opcional)",
