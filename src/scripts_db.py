@@ -149,11 +149,12 @@ def save_rejected_script(
 
 @st.cache_data(ttl=30)
 def load_saved_scripts(
-    status: str = "", client_name: str = "", limit: int = 50
+    status: str = "", client_name: str = "", client_key: str = "", limit: int = 50
 ) -> list[dict]:
     """
     Carrega roteiros salvos.
     status: 'aprovado' | 'rejeitado' | '' (todos)
+    Prefere filtrar por client_key quando disponível.
     """
     if not _configured():
         return []
@@ -170,7 +171,9 @@ def load_saved_scripts(
     }
     if status:
         params["status"] = f"eq.{status}"
-    if client_name:
+    if client_key:
+        params["client_key"] = f"eq.{client_key}"
+    elif client_name:
         params["client_name"] = f"eq.{client_name}"
 
     try:
@@ -188,22 +191,28 @@ def load_saved_scripts(
 
 # ── Padrões de rejeição agregados ─────────────────────────────────────────────
 
-def get_rejection_patterns(client_name: str) -> str:
+def get_rejection_patterns(client_key: str, client_name: str = "") -> str:
     """
     Analisa os motivos de rejeição do cliente e retorna um resumo
     dos padrões mais frequentes para incluir no prompt do Claude.
+    Filtra por client_key (preferencial) ou client_name como fallback.
     Retorna string vazia se não houver rejeições suficientes.
     """
-    if not _configured() or not client_name:
+    if not _configured() or (not client_key and not client_name):
         return ""
 
     url_base, key = _creds()
+    filter_param = (
+        {"client_key": f"eq.{client_key}"}
+        if client_key
+        else {"client_name": f"eq.{client_name}"}
+    )
     try:
         r = requests.get(
             f"{url_base}/rest/v1/script_copies",
             headers={"apikey": key, "Authorization": f"Bearer {key}"},
             params={
-                "client_name": f"eq.{client_name}",
+                **filter_param,
                 "status":      "eq.rejeitado",
                 "order":       "created_at.desc",
                 "limit":       "30",

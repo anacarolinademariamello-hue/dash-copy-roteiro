@@ -635,15 +635,17 @@ if st.button("🎬 Gerar 5 Roteiros", use_container_width=True):
                 client_rejection_patterns = ""
 
                 if selected_client:
+                    _client_key = selected_client.get("key", "")
                     all_saved = load_saved_scripts(
-                        client_name=selected_client["name"], limit=20
+                        client_key=_client_key, limit=20
                     )
                     client_approved = [s for s in all_saved if s.get("status") == "aprovado"]
                     client_rejected = [s for s in all_saved if s.get("status") == "rejeitado"]
-                    _client_key = selected_client.get("key", "")
                     if _client_key:
                         client_organic_metrics = load_latest_organic_metrics(_client_key)
-                    client_rejection_patterns = get_rejection_patterns(selected_client["name"])
+                    client_rejection_patterns = get_rejection_patterns(
+                        client_key=_client_key, client_name=selected_client["name"]
+                    )
 
                 # ── Tom de voz ────────────────────────────────────────────────
                 _tom_final = tom if "tom" in dir() else "Definido pelo perfil do cliente"
